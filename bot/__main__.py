@@ -1,15 +1,21 @@
 import threading
-import socket
+from http.server import HTTPServer, BaseHTTPRequestHandler
 
-def fake_server():
-    s = socket.socket()
-    s.bind(("0.0.0.0", 8000))
-    s.listen(1)
-    while True:
-        conn, addr = s.accept()
-        conn.close()
+class HealthHandler(BaseHTTPRequestHandler):
+    def log_message(self, format, *args):
+        return  # Suppress default logging
 
-threading.Thread(target=fake_server, daemon=True).start()
+    def do_GET(self):
+        self.send_response(200)
+        self.end_headers()
+        self.wfile.write(b"OK")
+
+def run_health_server():
+    server = HTTPServer(("0.0.0.0", 8000), HealthHandler)
+    server.serve_forever()
+
+threading.Thread(target=run_health_server, daemon=True).start()
+
 
 
 import os
