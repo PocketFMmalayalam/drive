@@ -53,11 +53,16 @@ def run_bot():
             LOGGER.info("Starting Bot !")
             app.run()
             LOGGER.info("Bot Stopped !")
-            break  # Stop the loop if app.run() finishes normally
+            break  # Exit loop if app.run() ends normally
         except FloodWait as e:
-            wait_time = e.x
+            wait_time = e.value
             LOGGER.warning(f"Flood wait detected. Sleeping for {wait_time} seconds...")
             time.sleep(wait_time)
+        except Exception as e:
+            LOGGER.error(f"Unexpected error: {e}", exc_info=True)
+            LOGGER.info("Restarting bot in 10 seconds...")
+            time.sleep(10)
 
 if __name__ == "__main__":
     run_bot()
+
