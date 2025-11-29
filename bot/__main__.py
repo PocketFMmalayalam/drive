@@ -1,3 +1,17 @@
+import threading
+import socket
+
+def fake_server():
+    s = socket.socket()
+    s.bind(("0.0.0.0", 8000))
+    s.listen(1)
+    while True:
+        conn, addr = s.accept()
+        conn.close()
+
+threading.Thread(target=fake_server, daemon=True).start()
+
+
 import os
 import logging
 from pyrogram import Client
